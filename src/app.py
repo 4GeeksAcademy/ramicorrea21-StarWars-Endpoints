@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, Planets, Characters
+from models import db, Planets, Characters, Users
 #from models import Person
 
 app = Flask(__name__)
@@ -44,8 +44,6 @@ def get_characters():
 
     for char in characters:
         result.append(char.serialize())
-   
-
 
     return jsonify(result), 200
 
@@ -63,10 +61,10 @@ def get_planets():
 def get_one_character(id=None):
     character_to_return = Characters()
     character_to_return = character_to_return.query.get(id)
-    if id is None:
-        return jsonify({"error in request, id needed"}), 400
-    if character_to_return is None:
-        return jsonify({"error in request, character not found"}), 404
+    # if id is None:
+    #     return jsonify({"error in request, id needed"}), 400
+    # if character_to_return is None:
+    #     return jsonify({"error in request, character not found"}), 404
 
     return jsonify(character_to_return.serialize()), 200
 
@@ -74,11 +72,33 @@ def get_one_character(id=None):
 def get_one_planet(id=None):
     planet_to_return = Planets()
     planet_to_return = planet_to_return.query.get(id)
-    if id is None:
-        return jsonify({"error in request, id needed"}), 400
-    if planet_to_return is None:
-        return jsonify({"error in request, planet not found"}), 404
-    return jsonify(planet_to_return.serialize())
+    # if id is None:
+    #     return jsonify({"error in request, id needed"}), 400
+    # if planet_to_return is None:
+    #     return jsonify({"error in request, planet not found"}), 404
+    return jsonify(planet_to_return.serialize()), 200
+
+@app.route('/users')
+def get_all_users():
+    users = Users()
+    users = users.query.all()
+    result = []
+    for user in users:
+        result.append(user.serialize())
+    
+    return jsonify(result), 200
+
+@app.route('/users/<int:user_id>')
+def get_one_user(user_id):
+    user = Users()
+    user = user.query.get(user_id)
+    # if user_id is None:
+    #     return jsonify({"error in request, id needed"}), 400
+    # if user is None:
+    #     return jsonify({"user not found"}), 404
+    
+    return jsonify(user.serialize()), 200
+    
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))

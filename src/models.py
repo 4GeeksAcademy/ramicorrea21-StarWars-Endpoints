@@ -29,3 +29,16 @@ class Planets(db.Model):
             "climate": self.climate,
             "population": self.population
         }
+    
+class Users(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    user_name = db.Column(db.String(50), nullable=False, unique=True)
+    email = db.Column(db.String(50), nullable=False, unique=True)
+    password = db.Column(db.String(50), nullable=False, unique=True)
+
+    def serialize(self):
+        return{
+            "id": self.id,
+            "user_name": self.user_name,
+            "email": self.email
+        }
