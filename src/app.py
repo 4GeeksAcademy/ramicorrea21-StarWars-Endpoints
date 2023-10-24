@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, Planets, Characters
 #from models import Person
 
 app = Flask(__name__)
@@ -36,15 +36,49 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
+@app.route('/characters', methods=['GET'])
+def get_characters():
+    characters = Characters()
+    characters = characters.query.all()
+    result = []
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+    for char in characters:
+        result.append(char.serialize())
+   
+
+
+    return jsonify(result), 200
+
+@app.route('/planets', methods=['GET'])
+def get_planets():
+    planets = Planets()
+    planets = planets.query.all()
+    response_body = []
+    for planet in planets:
+        response_body.append(planet.serialize())
 
     return jsonify(response_body), 200
 
+@app.route('/characters/<int:id>', methods=['GET'])
+def get_one_character(id=None):
+    character_to_return = Characters()
+    character_to_return = character_to_return.query.get(id)
+    if id is None:
+        return jsonify({"error in request, id needed"}), 400
+    if character_to_return is None:
+        return jsonify({"error in request, character not found"}), 404
+
+    return jsonify(character_to_return.serialize()), 200
+
+@app.route('/planets/<int:id>')
+def get_one_planet(id=None):
+    planet_to_return = Planets()
+    planet_to_return = planet_to_return.query.get(id)
+    if id is None:
+        return jsonify({"error in request, id needed"}), 400
+    if planet_to_return is None:
+        return jsonify({"error in request, planet not found"}), 404
+    return jsonify(planet_to_return.serialize())
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))

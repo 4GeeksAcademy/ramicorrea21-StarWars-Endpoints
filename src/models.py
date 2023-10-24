@@ -2,18 +2,30 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-
-    def __repr__(self):
-        return '<User %r>' % self.username
+class Characters(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    gender = db.Column(db.String(10), nullable=False, unique=False)
+    is_alive = db.Column(db.Boolean(), nullable=False, unique=False)
 
     def serialize(self):
-        return {
+        return{
             "id": self.id,
-            "email": self.email,
-            # do not serialize the password, its a security breach
+            "name": self.name,
+            "gender": self.gender,
+            "is_alive": self.is_alive
+        }
+
+class Planets(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    climate = db.Column(db.String(10), nullable=False, unique=False)
+    population = db.Column(db.Integer(), nullable=False, unique=False)
+
+    def serialize(self):
+        return{
+            "id": self.id,
+            "name": self.name,
+            "climate": self.climate,
+            "population": self.population
         }
